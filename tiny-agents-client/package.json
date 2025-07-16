@@ -1,0 +1,17 @@
+{
+  "name": "tiny-agents-client",
+  "version": "1.0.0",
+  "description": "A minimal MCP-powered agent in ~50 lines of code, inspired by Hugging Face's Tiny Agents blog.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@huggingface/mcp-client": "latest",
+    "adm-zip": "^0.5.16",
+    "dotenv": "latest",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7"
+  }
+}
