@@ -109,7 +109,7 @@ flowchart TD
 
 
 
-## �️ Project Structure
+## 🗂️ Project Structure
 
 ```text
 Tiny-Agents/
@@ -122,7 +122,7 @@ Tiny-Agents/
 ---
 
 
-## � Example Commands
+##  💡 Example Commands
 
 Try these natural language commands:
 
