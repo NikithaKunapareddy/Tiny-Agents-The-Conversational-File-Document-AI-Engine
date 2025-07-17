@@ -1,6 +1,6 @@
 # 🤖🗂️ Tiny-Agents – The Conversational File & Document AI Engine
 
-# 🤖🗂️ Tiny-Agents – The Conversational File & Document AI Engine
+**Automate your desktop with natural language. Summarize, organize, and command your files—just by talking!**
 
 ---
 
@@ -26,65 +26,44 @@ Welcome to **Tiny-Agents**: your all-in-one, natural language-powered desktop au
 
 Tiny-Agents is built with a layered, modular architecture for clarity, reliability, and future scalability. See the system design below:
 
-### 🖼️ System Design Diagram
 
 ```mermaid
-flowchart TB
-    subgraph "User Layer"
-        U1[User Input - Natural Language Commands]
-        U2[Terminal Interface - CLI Output Display]
-    end
-    subgraph "Core Engine"
-        A1[CLI Command Engine - Python NLP]
-        A2[Summarization LLM - Hugging Face API]
-        A3[File/Folder Operations - Python stdlib]
-    end
-    subgraph "Support & Security"
-        B1[Environment Management - python-dotenv]
-        B2[Output Orchestration - Console & File Output]
-        B3[Error Handling & Logging - Python logging]
-        B4[Security & Validation - Safe File Operations]
-    end
-    subgraph "File Operations Tools"
-        C1[Find Files - Search Operations]
-        C2[File Management - Move/Copy/Create/Delete]
-        C3[Text Operations - Append/Replace]
-        C4[Archive Operations - Zip/Extract]
-    end
-    subgraph "AI Workflow"
-        D1[LLM Decision - Tool Selection]
-        D2[MCP Tool Call - Execute Operations]
-        D3[Result Processing - Format Response]
-    end
-    %% Main User Flow
-    U1 --> A1
-    A1 --> U2
-    %% Core Engine Processing
-    A1 --> A2
-    A1 --> A3
-    A1 --> B2
+flowchart TD
+    %% User Interface
+    USER[User Input - Natural Language]
+    TERMINAL[Terminal - CLI Output]
+    %% Core Processing
+    CLI[CLI Engine - Command Parser]
+    LLM[AI Model - Hugging Face]
+    FILES[File Operations - Python stdlib]
     %% Support Systems
-    B1 --> A1
-    B3 --> A1
-    B4 --> A1
-    %% AI Decision Workflow
-    A1 --> D1
-    D1 --> D2
-    D2 --> D3
-    D3 --> A1
-    %% Tool Operations
-    A3 --> C1
-    A3 --> C2
-    A3 --> C3
-    A3 --> C4
-    %% Results Return
-    C1 --> D3
-    C2 --> D3
-    C3 --> D3
-    C4 --> D3
-    %% Additional Connections
-    A2 --> D1
-    B2 --> U2
+    ENV[Environment - Config and Keys]
+    OUTPUT[Output Handler - Console and Files]
+    SECURITY[Security - Validation]
+    LOGGER[Error Handler - Logging]
+    %% File Tools
+    FIND[Find Files]
+    MANAGE[File Manager]
+    TEXT[Text Editor]
+    ARCHIVE[Archive Tools]
+    %% Main Flow
+    USER --> CLI
+    CLI --> LLM
+    LLM --> FILES
+    FILES --> FIND
+    FILES --> MANAGE
+    FILES --> TEXT
+    FILES --> ARCHIVE
+    %% Return Path
+    FIND --> OUTPUT
+    MANAGE --> OUTPUT
+    TEXT --> OUTPUT
+    ARCHIVE --> OUTPUT
+    OUTPUT --> TERMINAL
+    %% Support Connections
+    ENV --> CLI
+    SECURITY --> CLI
+    LOGGER --> CLI
 ```
 
 ### 🗂️ Component Matrix
@@ -128,19 +107,6 @@ flowchart TB
 > **Note:**
 > The LLM doesn’t run the tool itself — it just tells the agent which tool to use and what inputs to give. The AI Agent does the actual tool call using MCP, waits for the result, and then the LLM gives you the final response.
 
-### 🗺️ Visual Workflow
-
-```mermaid
-flowchart LR
-    U[User Request] --> LLM[LLM (Hugging Face)]
-    LLM -->|"Call tool X with Y"| AGENT[Tiny-Agent]
-    AGENT -->|MCP tool call| TOOL[Tool Runs]
-    TOOL -->|Result| LLM
-    LLM -->|Final Reply| AGENT
-    AGENT -->|Shows Answer| U
-```
-
----
 
 ## �️ Project Structure
 
