@@ -1,0 +1,30 @@
+yarn-debug.log*
+yarn-error.log*
+yarn.lock
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment variables
+.env
+.env.*
+
+# Logs
+*.log
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VSCode settings
+.vscode/
+
+# IDE
+.idea/
+
+# Output
+/dist
+/build
