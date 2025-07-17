@@ -2,7 +2,6 @@
 
 **Automate your desktop with natural language. Summarize, organize, and command your files—just by talking!**
 
----
 
 ## 🚀 Executive Synopsis
 
