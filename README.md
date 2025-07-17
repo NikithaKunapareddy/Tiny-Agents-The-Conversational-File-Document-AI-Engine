@@ -1,24 +1,15 @@
 # 🤖🗂️ Tiny-Agents – The Conversational File & Document AI Engine
 
-<br>
 
-> *Automate your desktop with natural language. Summarize, organize, and command your files—just by talking!*
-
-<br>
+> **_Automate your desktop with natural language. Summarize, organize, and command your files—just by talking!_**
 
 ---
-
-<br>
 
 ## 🚀 Executive Synopsis
 
 Welcome to **Tiny-Agents**: your all-in-one, natural language-powered desktop automation assistant! Effortlessly manage files, organize folders, and generate rich document summaries—just by talking to your computer. Powered by Hugging Face LLMs and robust Python automation, Tiny-Agents brings the future of productivity to your terminal.
 
-<br>
-
 ---
-
-<br>
 
 ## 🎯 Core Competencies & Capabilities
 
