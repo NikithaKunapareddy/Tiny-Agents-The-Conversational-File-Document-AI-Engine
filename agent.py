@@ -2,14 +2,12 @@ import os
 import shutil
 import zipfile
 import requests
-import openai
 from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
 HF_TOKEN = os.getenv('HF_TOKEN')
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-OPENAI_MODEL = os.getenv('MODEL_ID')
+MODEL_ID = os.getenv('MODEL_ID')
 
 DESKTOP = os.path.join(os.path.expanduser('~'), 'Desktop')
 
@@ -75,16 +73,28 @@ def summarize_file(path):
         return None
     with open(path, 'r', encoding='utf-8') as f:
         content = f.read()
+    print(f"[DEBUG] Read {len(content)} characters from {path}.")
+    print(f"[DEBUG] File preview: {repr(content[:100])}")
     if not content.strip():
         print(f"[ERROR] File is empty: {path}")
         return None
 
-    # Chunking logic: split content into ~1800 char chunks (safe for model)
+    # Improved chunking: overlap to avoid topic loss at boundaries
     chunk_size = 1800
-    chunks = [content[i:i+chunk_size] for i in range(0, len(content), chunk_size)]
+    overlap = 500  # chars of overlap between chunks
+    chunks = []
+    i = 0
+    while i < len(content):
+        chunk = content[i:i+chunk_size]
+        chunks.append(chunk)
+        if i + chunk_size >= len(content):
+            break
+        i += chunk_size - overlap
+
     chunk_summaries = []
     for idx, chunk in enumerate(chunks):
         print(f"[DEBUG] Summarizing chunk {idx+1}/{len(chunks)} (length: {len(chunk)})")
+        # Only send the chunk content, not instructions, to the model
         summary = call_llm(chunk)
         if summary and summary.strip():
             chunk_summaries.append(summary.strip())
@@ -93,41 +103,17 @@ def summarize_file(path):
     if not chunk_summaries:
         print(f"[ERROR] No summaries generated for any chunk in {path}")
         return None
-    # Combine all chunk summaries and summarize again for a single brief summary
+    # Combine all chunk summaries and summarize again for a comprehensive summary
     combined = '\n'.join(chunk_summaries)
-    prompt = (
-        "Provide a detailed and comprehensive summary of the following document, covering all key points, definitions, types, methods, and limitations: "
-        + combined
-    )
+    # Only send the combined summary text, not instructions, to the model
     print(f"[DEBUG] Summarizing combined chunk summaries for final summary.")
-    final_summary = call_llm(prompt)
+    final_summary = call_llm(combined)
     if not final_summary or not final_summary.strip():
         print(f"[ERROR] No final summary generated, returning concatenated chunk summaries.")
         final_summary = combined
     return final_summary
 
 def call_llm(text):
-    # Prefer OpenAI if API key is set
-    if OPENAI_API_KEY:
-        try:
-            import openai
-            model = OPENAI_MODEL or "gpt-3.5-turbo"
-            prompt = f"Summarize the following text:\n{text[:3000]}"
-            client = openai.OpenAI(api_key=OPENAI_API_KEY)
-            response = client.chat.completions.create(
-                model=model,
-                messages=[{"role": "user", "content": prompt}],
-                max_tokens=512,
-                temperature=0.5,
-            )
-            summary = response.choices[0].message.content.strip()
-            print(f"[DEBUG] OpenAI Summary: {summary}")
-            return summary
-        except Exception as e:
-            print(f"[OpenAI ERROR] {e}")
-            return None
-    # Fallback to Hugging Face
-    MODEL_ID = os.getenv('MODEL_ID')
     if not HF_TOKEN:
         print("[ERROR] Hugging Face API token not set in .env")
         return None
@@ -136,7 +122,10 @@ def call_llm(text):
         return None
     url = f"https://api-inference.huggingface.co/models/{MODEL_ID}"
     headers = {"Authorization": f"Bearer {HF_TOKEN}"}
-    payload = {"inputs": f"Summarize this: {text[:2000]}"}
+    payload = {
+        "inputs": text[:2000],
+        "parameters": {"max_length": 2048, "min_length": 300}
+    }
     try:
         resp = requests.post(url, headers=headers, json=payload, timeout=60)
         resp.raise_for_status()
@@ -385,22 +374,37 @@ def main():
                         print(f"[ERROR] No summary generated or file is empty: {file}")
         # ...existing code for other commands...
         elif cmd.startswith('delete'):
-            # Support deleting files and folders
-            if 'folder' in cmd or 'floder' in cmd:
-                # Handle typo 'floder' as well
-                folder = cmd.replace('delete the folder', '').replace('delete the floder', '').replace('from my desktop', '').strip()
+            # Support deleting files and folders robustly
+            import re
+            # Delete folder or floder (typo)
+            folder_match = re.match(r'delete (?:the )?(?:folder|floder)\s+(.+)', cmd)
+            if folder_match:
+                folder = folder_match.group(1).replace('from my desktop', '').strip()
                 path = os.path.join(DESKTOP, folder)
                 if os.path.isdir(path):
-                    import shutil
-                    shutil.rmtree(path)
-                    print(f"Deleted folder {folder}")
+                    try:
+                        shutil.rmtree(path)
+                        print(f"Deleted folder {folder}")
+                    except Exception as e:
+                        print(f"[ERROR] Could not delete folder '{folder}': {e}")
                 else:
-                    print(f"Folder '{folder}' not found on your desktop.")
+                    print(f"[ERROR] Folder '{folder}' not found on your desktop.")
             else:
-                file = cmd.replace('delete the file', '').replace('from my desktop', '').strip()
-                path = os.path.join(DESKTOP, file)
-                delete_file(path)
-                print(f"Deleted {file}")
+                # Delete file
+                file_match = re.match(r'delete (?:the )?file\s+(.+)', cmd)
+                if file_match:
+                    file = file_match.group(1).replace('from my desktop', '').strip()
+                    path = os.path.join(DESKTOP, file)
+                    if os.path.isfile(path):
+                        try:
+                            delete_file(path)
+                            print(f"Deleted file {file}")
+                        except Exception as e:
+                            print(f"[ERROR] Could not delete file '{file}': {e}")
+                    else:
+                        print(f"[ERROR] File '{file}' not found on your desktop.")
+                else:
+                    print("[ERROR] Please specify a valid file or folder to delete.")
         elif cmd == '':
             pass
         else:
