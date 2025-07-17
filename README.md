@@ -1,3 +1,4 @@
+# 🤖🗂️ Tiny-Agents – The Conversational File & Document AI Engine
 
 # 🤖🗂️ Tiny-Agents – The Conversational File & Document AI Engine
 
@@ -29,23 +30,61 @@ Tiny-Agents is built with a layered, modular architecture for clarity, reliabili
 
 ```mermaid
 flowchart TB
-    subgraph Core Engine
-        A1[🤖 CLI Command Engine\n(Python)]
-        A2[🧠 Summarization LLM\n(Hugging Face API)]
-        A3[📂 File/Folder Ops\n(Python stdlib)]
+    subgraph "User Layer"
+        U1[User Input - Natural Language Commands]
+        U2[Terminal Interface - CLI Output Display]
     end
-    subgraph Support & Security
-        B1[🔐 Env Management\n(python-dotenv)]
-        B2[📤 Output Orchestration\n(Console, Files)]
-        B3[🛡️ Error Handling & Logging]
-        B4[🔒 Security & Input Validation]
+    subgraph "Core Engine"
+        A1[CLI Command Engine - Python NLP]
+        A2[Summarization LLM - Hugging Face API]
+        A3[File/Folder Operations - Python stdlib]
     end
+    subgraph "Support & Security"
+        B1[Environment Management - python-dotenv]
+        B2[Output Orchestration - Console & File Output]
+        B3[Error Handling & Logging - Python logging]
+        B4[Security & Validation - Safe File Operations]
+    end
+    subgraph "File Operations Tools"
+        C1[Find Files - Search Operations]
+        C2[File Management - Move/Copy/Create/Delete]
+        C3[Text Operations - Append/Replace]
+        C4[Archive Operations - Zip/Extract]
+    end
+    subgraph "AI Workflow"
+        D1[LLM Decision - Tool Selection]
+        D2[MCP Tool Call - Execute Operations]
+        D3[Result Processing - Format Response]
+    end
+    %% Main User Flow
+    U1 --> A1
+    A1 --> U2
+    %% Core Engine Processing
     A1 --> A2
     A1 --> A3
     A1 --> B2
+    %% Support Systems
     B1 --> A1
     B3 --> A1
     B4 --> A1
+    %% AI Decision Workflow
+    A1 --> D1
+    D1 --> D2
+    D2 --> D3
+    D3 --> A1
+    %% Tool Operations
+    A3 --> C1
+    A3 --> C2
+    A3 --> C3
+    A3 --> C4
+    %% Results Return
+    C1 --> D3
+    C2 --> D3
+    C3 --> D3
+    C4 --> D3
+    %% Additional Connections
+    A2 --> D1
+    B2 --> U2
 ```
 
 ### 🗂️ Component Matrix
@@ -93,9 +132,9 @@ flowchart TB
 
 ```mermaid
 flowchart LR
-    U[👤 User Request] --> LLM[🧠 LLM (Hugging Face)]
-    LLM -->|"Call tool X with Y"| AGENT[🤖 Tiny-Agent]
-    AGENT -->|MCP tool call| TOOL[🛠️ Tool Runs]
+    U[User Request] --> LLM[LLM (Hugging Face)]
+    LLM -->|"Call tool X with Y"| AGENT[Tiny-Agent]
+    AGENT -->|MCP tool call| TOOL[Tool Runs]
     TOOL -->|Result| LLM
     LLM -->|Final Reply| AGENT
     AGENT -->|Shows Answer| U
@@ -202,20 +241,10 @@ python agent.py
 ---
 
 
-## �‍💻 Author
-
-**Nikitha Kunapareddy**
-
-Architecturally creative software engineer specializing in AI-powered automation, natural language interfaces, and high-performance backend systems. Passionate about building tools that make technology more human and accessible.
-
----
-
-
 
 ## 💬 Get Creative!
 
 Unleash the power of natural language to automate your desktop. If you can say it, Tiny-Agents can probably do it! 🚀
 
----
 
 🎉 Thank you for exploring Tiny-Agents! Enjoy automating your world, one command at a time. Happy hacking! 😃🤖✨
