@@ -30,7 +30,6 @@ def search_files(query):
     except Exception as e:
         print(f"[ERROR] Could not list Desktop: {e}")
         return results
-    # print(f"[DEBUG] Files on Desktop: {files}")
     if query in known_exts:
         for file in files:
             clean_file = file.strip().lower()
@@ -207,7 +206,6 @@ def main():
             continue
 
         if cmd.startswith('move'):
-
             match = re.match(r'move\s+(.+?)\s+to\s+(.+)', cmd)
             if match:
                 src = match.group(1).strip()
@@ -385,7 +383,7 @@ def main():
                     file = match.group(1).strip()
                     out_file = match.group(2).strip()
                 else:
-                    txts = re.findall(r'([\\w\\-.]+\\.txt)', cmd)
+                    txts = re.findall(r'([\w\-.]+\.txt)', cmd)
                     if len(txts) >= 2:
                         file, out_file = txts[0], txts[1]
                 if not file or not out_file:
@@ -426,7 +424,7 @@ def main():
 
         if cmd.startswith('delete'):
             folder_match = re.match(
-                r'delete (?:the )?(?:folder|floder)\\s+(.+)', cmd
+                r'delete (?:the )?(?:folder|floder)\s+(.+)', cmd
             )
             if folder_match:
                 folder = (
@@ -448,7 +446,7 @@ def main():
                         f"[ERROR] Folder '{folder}' not found on your desktop."
                     )
             else:
-                file_match = re.match(r'delete (?:the )?file\\s+(.+)', cmd)
+                file_match = re.match(r'delete (?:the )?file\s+(.+)', cmd)
                 if file_match:
                     file = (
                         file_match.group(1)
