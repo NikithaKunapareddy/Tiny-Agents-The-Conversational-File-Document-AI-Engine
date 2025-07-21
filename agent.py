@@ -139,7 +139,9 @@ def call_llm(text):
         "parameters": {"max_length": 2048, "min_length": 300}
     }
     try:
-        resp = requests.post(url, headers=headers, json=payload, timeout=60)
+        resp = requests.post(
+            url, headers=headers, json=payload, timeout=60
+        )
         resp.raise_for_status()
         result = resp.json()
         if isinstance(result, list):
@@ -323,8 +325,10 @@ def main():
                     if not os.path.exists(p)
                 ]
                 if missing:
-                    print(f"[ERROR] These files were not found: "
-                          f"{', '.join(missing)}")
+                    print(
+                        f"[ERROR] These files were not found: "
+                        f"{', '.join(missing)}"
+                    )
                 else:
                     zip_path = os.path.join(DESKTOP, zip_name)
                     compress_files(file_paths, zip_path)
@@ -338,7 +342,8 @@ def main():
 
         if cmd.startswith('summarize'):
             zip_match = re.match(
-                r'summarize(?: the content of)? ([^ ]+) from ([^ ]+) and save to ([^ ]+)',
+                r'summarize(?: the content of)? ([^ ]+) from ([^ ]+) '
+                r'and save to ([^ ]+)',
                 cmd
             )
             if zip_match:
@@ -351,8 +356,10 @@ def main():
                     continue
                 with zipfile.ZipFile(archive_path, 'r') as zipf:
                     if file not in zipf.namelist():
-                        print(f"[ERROR] File {file} not found in archive "
-                              f"{archive}")
+                        print(
+                            f"[ERROR] File {file} not found in archive "
+                            f"{archive}"
+                        )
                         continue
                     with zipf.open(file) as f:
                         content = f.read().decode('utf-8')
@@ -364,8 +371,10 @@ def main():
                         continue
                     summary = call_llm(content)
                     if not summary or not summary.strip():
-                        print(f"[ERROR] No summary generated for {file} "
-                              f"in archive {archive}")
+                        print(
+                            f"[ERROR] No summary generated for {file} "
+                            f"in archive {archive}"
+                        )
                         continue
                     out_path = os.path.join(DESKTOP, out_file)
                     with open(out_path, 'w', encoding='utf-8') as f:
@@ -376,7 +385,8 @@ def main():
                 file = None
                 out_file = None
                 match = re.match(
-                    r'summarize(?: the content of)? ([^ ]+?) and save to ([^ ]+)',
+                    r'summarize(?: the content of)? ([^ ]+?) '
+                    r'and save to ([^ ]+)',
                     cmd
                 )
                 if match:
@@ -443,7 +453,8 @@ def main():
                         )
                 else:
                     print(
-                        f"[ERROR] Folder '{folder}' not found on your desktop."
+                        f"[ERROR] Folder '{folder}' not found on "
+                        f"your desktop."
                     )
             else:
                 file_match = re.match(r'delete (?:the )?file\s+(.+)', cmd)
@@ -460,22 +471,27 @@ def main():
                             print(f"Deleted file '{file}'")
                         except Exception as e:
                             print(
-                                f"[ERROR] Could not delete file '{file}': {e}"
+                                f"[ERROR] Could not delete file "
+                                f"'{file}': {e}"
                             )
                     else:
                         print(
-                            f"[ERROR] File '{file}' not found on your desktop."
+                            f"[ERROR] File '{file}' not found on "
+                            f"your desktop."
                         )
                 else:
                     print(
-                        "[ERROR] Please specify a valid file or folder to delete."
+                        "[ERROR] Please specify a valid file or folder "
+                        "to delete."
                     )
             continue
 
         if cmd == '':
             pass
         else:
-            print("Sorry, I didn't understand that command.")
+            print(
+                "Sorry, I didn't understand that command."
+            )
 
 
 if __name__ == '__main__':
