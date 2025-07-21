@@ -404,11 +404,17 @@ def main():
                             delete_file(path)
                             print(f"Deleted file {file}")
                         except Exception as e:
-                            print(f"[ERROR] Could not delete file '{file}': {e}")
+                            # Split long error message for flake8 compliance
+                            print(f"[ERROR] Could not delete file '"
+                                  f"{file}': {e}")
                     else:
-                        print(f"[ERROR] File '{file}' not found on your desktop.")
+                        # Split long error message for flake8 compliance
+                        print(f"[ERROR] File '{file}' not found "
+                              f"on your desktop.")
                 else:
-                    print("[ERROR] Please specify a valid file or folder to delete.")
+                    # Split long error message for flake8 compliance
+                    print("[ERROR] Please specify a valid file or "
+                          "folder to delete.")
         elif cmd == '':
             pass
         else:
@@ -416,6 +422,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
 
 
