@@ -176,14 +176,15 @@ def delete_file(path):
 
 def main():
     print_banner()
+    import re
 
     while True:
         cmd = input('> ').strip()
         if cmd.lower() in ('exit', 'quit'):
             print('Goodbye!')
             break
+
         # Flexible 'find' command parsing
-        import re
         if cmd.startswith('find'):
             cleaned = (
                 cmd.replace('find', '')
@@ -204,6 +205,7 @@ def main():
             else:
                 print("No files found matching your search.")
             continue
+
         if cmd.startswith('move'):
             match = re.match(r'move\s+(.+?)\s+to\s+(.+)', cmd)
             if match:
@@ -219,6 +221,7 @@ def main():
             else:
                 print("Sorry, I didn't understand that move command.")
             continue
+
         if cmd.startswith('copy'):
             match = re.match(r'copy\s+(.+?)\s+to\s+(.+)', cmd)
             if match:
@@ -234,8 +237,9 @@ def main():
             else:
                 print("Sorry, I didn't understand that copy command.")
             continue
+
         if cmd.startswith('append'):
-            match = re.match(r'append\s+"(.+?)"\s+to\s+(.+)', cmd)
+            match = re.match(r'append\s+\"(.+?)\"\s+to\s+(.+)', cmd)
             if match:
                 text = match.group(1)
                 file = match.group(2).strip()
@@ -251,9 +255,10 @@ def main():
                     "Use: append \"text\" to file.txt"
                 )
             continue
+
         if cmd.startswith('replace'):
             match = re.match(
-                r'replace\s+"(.+?)"\s+with\s+"(.+?)"\s+in\s+(.+)', cmd
+                r'replace\s+\"(.+?)\"\s+with\s+\"(.+?)\"\s+in\s+(.+)', cmd
             )
             if match:
                 old = match.group(1)
@@ -271,6 +276,7 @@ def main():
                     "Use: replace \"old\" with \"new\" in file.txt"
                 )
             continue
+
         if cmd.startswith('create folder') or cmd.startswith('make folder'):
             match = re.match(r'(?:create|make) folder\s+(.+)', cmd)
             if match:
@@ -287,6 +293,7 @@ def main():
                     "Use: create folder myfolder"
                 )
             continue
+
         if cmd.startswith('create file'):
             match = re.match(r'create file\s+(.+)', cmd)
             if match:
@@ -304,6 +311,7 @@ def main():
                     "Use: create file myfile.txt"
                 )
             continue
+
         if cmd.startswith('zip'):
             match = re.match(r'zip\s+(.+?)\s+as\s+(.+)', cmd)
             if match:
@@ -323,15 +331,14 @@ def main():
                 else:
                     zip_path = os.path.join(DESKTOP, zip_name)
                     compress_files(file_paths, zip_path)
-                    print(
-                        f"Created zip archive {zip_name}"
-                    )
+                    print(f"Created zip archive {zip_name}")
             else:
                 print(
                     "Sorry, I didn't understand that zip command. "
                     "Use: zip file1.txt, file2.txt as archive.zip"
                 )
             continue
+
         if cmd.startswith('summarize'):
             zip_match = re.match(
                 r'summarize(?: the content of)? ([^ ]+) from ([^ ]+) and save to ([^ ]+)',
@@ -383,7 +390,7 @@ def main():
                     file = match.group(1).strip()
                     out_file = match.group(2).strip()
                 else:
-                    txts = re.findall(r'([\w\-.]+\.txt)', cmd)
+                    txts = re.findall(r'([\\w\\-.]+\\.txt)', cmd)
                     if len(txts) >= 2:
                         file, out_file = txts[0], txts[1]
                 if not file or not out_file:
@@ -420,9 +427,11 @@ def main():
                             f"[ERROR] No summary generated or file is empty: "
                             f"{file}"
                         )
+            continue
+
         if cmd.startswith('delete'):
             folder_match = re.match(
-                r'delete (?:the )?(?:folder|floder)\s+(.+)', cmd
+                r'delete (?:the )?(?:folder|floder)\\s+(.+)', cmd
             )
             if folder_match:
                 folder = (
@@ -437,16 +446,14 @@ def main():
                         print(f"Deleted folder {folder}")
                     except Exception as e:
                         print(
-                            f"[ERROR] Could not delete folder '"
-                            f"{folder}': {e}"
+                            f"[ERROR] Could not delete folder '{folder}': {e}"
                         )
                 else:
                     print(
-                        f"[ERROR] Folder '{folder}' not found "
-                        f"on your desktop."
+                        f"[ERROR] Folder '{folder}' not found on your desktop."
                     )
             else:
-                file_match = re.match(r'delete (?:the )?file\s+(.+)', cmd)
+                file_match = re.match(r'delete (?:the )?file\\s+(.+)', cmd)
                 if file_match:
                     file = (
                         file_match.group(1)
@@ -457,22 +464,21 @@ def main():
                     if os.path.isfile(path):
                         try:
                             delete_file(path)
-                            print(f"Deleted file {file}")
+                            print(f"Deleted file '{file}'")
                         except Exception as e:
                             print(
-                                f"[ERROR] Could not delete file '"
-                                f"{file}': {e}"
+                                f"[ERROR] Could not delete file '{file}': {e}"
                             )
                     else:
                         print(
-                            f"[ERROR] File '{file}' not found "
-                            f"on your desktop."
+                            f"[ERROR] File '{file}' not found on your desktop."
                         )
                 else:
                     print(
-                        "[ERROR] Please specify a valid file or "
-                        "folder to delete."
+                        "[ERROR] Please specify a valid file or folder to delete."
                     )
+            continue
+
         if cmd == '':
             pass
         else:
