@@ -21,8 +21,8 @@ def search_files(query):
     results = []
     query = query.lower()
     known_exts = [
-        'pdf', 'txt', 'doc', 'docx', 'csv', 'xlsx', 'ppt', 'pptx',
-        'jpg', 'jpeg', 'png', 'zip'
+        'pdf', 'txt', 'doc', 'docx', 'csv', 'xlsx', 'ppt',
+        'pptx', 'jpg', 'jpeg', 'png', 'zip'
     ]
     # Only search the top-level of Desktop
     try:
@@ -406,7 +406,7 @@ def main():
                         except Exception as e:
                             # Split long error message for flake8 compliance
                             print(f"[ERROR] Could not delete file '"
-                                  f"{file}': {e}")
+                              f"{file}': {e}")
                     else:
                         # Split long error message for flake8 compliance
                         print(f"[ERROR] File '{file}' not found "
@@ -422,6 +422,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
 
 
