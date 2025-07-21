@@ -20,7 +20,10 @@ def print_banner():
 def search_files(query):
     results = []
     query = query.lower()
-    known_exts = ['pdf', 'txt', 'doc', 'docx', 'csv', 'xlsx', 'ppt', 'pptx', 'jpg', 'jpeg', 'png', 'zip']
+    known_exts = [
+        'pdf', 'txt', 'doc', 'docx', 'csv', 'xlsx', 'ppt', 'pptx',
+        'jpg', 'jpeg', 'png', 'zip'
+    ]
     # Only search the top-level of Desktop
     try:
         files = os.listdir(DESKTOP)
@@ -93,7 +96,8 @@ def summarize_file(path):
 
     chunk_summaries = []
     for idx, chunk in enumerate(chunks):
-        print(f"[DEBUG] Summarizing chunk {idx+1}/{len(chunks)} (length: {len(chunk)})")
+        print(f"[DEBUG] Summarizing chunk {idx+1}/{len(chunks)} "
+              f"(length: {len(chunk)})")
         # Only send the chunk content, not instructions, to the model
         summary = call_llm(chunk)
         if summary and summary.strip():
