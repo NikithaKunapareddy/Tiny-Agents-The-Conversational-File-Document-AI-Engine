@@ -156,11 +156,16 @@ def call_llm(text):
         print(f"[LLM ERROR] {e}")
     return None
 
+
+
 def delete_file(path):
     os.remove(path)
 
+
+
 def main():
     print_banner()
+
     while True:
         cmd = input('> ').strip()
         if cmd.lower() in ('exit', 'quit'):
@@ -186,7 +191,7 @@ def main():
             cleaned = cleaned.strip()
             if not cleaned:
                 print("Please specify what to search for.")
-                return
+                continue
             results = search_files(cleaned)
             if results:
                 print(f"Found {len(results)} files:")
@@ -246,7 +251,7 @@ def main():
                     edit_file(file_path, append_text=text)
                     print(f"Appended text to {file}")
             else:
-                    print(
+                print(
                     "Sorry, I didn't understand that append command. "
                     "Use: append \"text\" to file.txt"
                 )
@@ -439,6 +444,7 @@ def main():
                             f"{file}"
                         )
         # ...existing code for other commands...
+
         elif cmd.startswith('delete'):
             # Support deleting files and folders robustly
             import re
@@ -506,6 +512,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
 
 
