@@ -207,6 +207,7 @@ def main():
             continue
 
         if cmd.startswith('move'):
+
             match = re.match(r'move\s+(.+?)\s+to\s+(.+)', cmd)
             if match:
                 src = match.group(1).strip()
@@ -324,10 +325,8 @@ def main():
                     if not os.path.exists(p)
                 ]
                 if missing:
-                    print(
-                        f"[ERROR] These files were not found: "
-                        f"{', '.join(missing)}"
-                    )
+                    print(f"[ERROR] These files were not found: "
+                          f"{', '.join(missing)}")
                 else:
                     zip_path = os.path.join(DESKTOP, zip_name)
                     compress_files(file_paths, zip_path)
@@ -354,10 +353,8 @@ def main():
                     continue
                 with zipfile.ZipFile(archive_path, 'r') as zipf:
                     if file not in zipf.namelist():
-                        print(
-                            f"[ERROR] File {file} not found in archive "
-                            f"{archive}"
-                        )
+                        print(f"[ERROR] File {file} not found in archive "
+                              f"{archive}")
                         continue
                     with zipf.open(file) as f:
                         content = f.read().decode('utf-8')
@@ -369,10 +366,8 @@ def main():
                         continue
                     summary = call_llm(content)
                     if not summary or not summary.strip():
-                        print(
-                            f"[ERROR] No summary generated for {file} "
-                            f"in archive {archive}"
-                        )
+                        print(f"[ERROR] No summary generated for {file} "
+                              f"in archive {archive}")
                         continue
                     out_path = os.path.join(DESKTOP, out_file)
                     with open(out_path, 'w', encoding='utf-8') as f:
