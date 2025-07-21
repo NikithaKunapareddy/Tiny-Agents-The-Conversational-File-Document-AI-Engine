@@ -11,6 +11,7 @@ MODEL_ID = os.getenv('MODEL_ID')
 
 DESKTOP = os.path.join(os.path.expanduser('~'), 'Desktop')
 
+
 def print_banner():
     print("\n🤖 Byte Agents Client (Python)")
     print("Type your natural language file commands. Type 'exit' to quit.\n")
