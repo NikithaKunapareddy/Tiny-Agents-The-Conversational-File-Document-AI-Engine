@@ -361,23 +361,23 @@ def main():
                         continue
                     with zipf.open(file) as f:
                         content = f.read().decode('utf-8')
-                if not content.strip():
-                    print(
-                        f"[ERROR] File {file} in archive "
-                        f"{archive} is empty."
-                    )
-                    continue
-                summary = call_llm(content)
-                if not summary or not summary.strip():
-                    print(
-                        f"[ERROR] No summary generated for {file} "
-                        f"in archive {archive}"
-                    )
-                    continue
-                out_path = os.path.join(DESKTOP, out_file)
-                with open(out_path, 'w', encoding='utf-8') as f:
-                    f.write(summary)
-                print(f"Summary saved to {out_file}")
+                    if not content.strip():
+                        print(
+                            f"[ERROR] File {file} in archive "
+                            f"{archive} is empty."
+                        )
+                        continue
+                    summary = call_llm(content)
+                    if not summary or not summary.strip():
+                        print(
+                            f"[ERROR] No summary generated for {file} "
+                            f"in archive {archive}"
+                        )
+                        continue
+                    out_path = os.path.join(DESKTOP, out_file)
+                    with open(out_path, 'w', encoding='utf-8') as f:
+                        f.write(summary)
+                    print(f"Summary saved to {out_file}")
                 continue
             elif 'and save to' in cmd:
                 file = None
