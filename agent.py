@@ -107,13 +107,17 @@ def summarize_file(path):
     if not chunk_summaries:
         print(f"[ERROR] No summaries generated for any chunk in {path}")
         return None
-    # Combine all chunk summaries and summarize again for a comprehensive summary
+    # Combine all chunk summaries and summarize again for a
+    # comprehensive summary
     combined = '\n'.join(chunk_summaries)
     # Only send the combined summary text, not instructions, to the model
     print(f"[DEBUG] Summarizing combined chunk summaries for final summary.")
     final_summary = call_llm(combined)
     if not final_summary or not final_summary.strip():
-        print(f"[ERROR] No final summary generated, returning concatenated chunk summaries.")
+        print(
+            f"[ERROR] No final summary generated, "
+            f"returning concatenated chunk summaries."
+        )
         final_summary = combined
     return final_summary
 
@@ -165,10 +169,18 @@ def main():
         # Flexible 'find' command parsing
         import re
         if cmd.startswith('find'):
-            # Accepts: find all pdf files on my desktop, find pdf, find report, etc.
+            # Accepts: find all pdf files on my desktop,
+            # find pdf, find report, etc.
             # Extract the main search term (extension or keyword)
             # Remove 'find', 'all', 'files', 'file', 'on my desktop', etc.
-            cleaned = cmd.replace('find', '').replace('all', '').replace('files', '').replace('file', '').replace('on my desktop', '').strip()
+            cleaned = (
+                cmd.replace('find', '')
+                .replace('all', '')
+                .replace('files', '')
+                .replace('file', '')
+                .replace('on my desktop', '')
+                .strip()
+            )
             # Remove extra spaces and punctuation
             cleaned = re.sub(r'[.,;:!?]', '', cleaned)
             cleaned = cleaned.strip()
@@ -234,14 +246,19 @@ def main():
                     edit_file(file_path, append_text=text)
                     print(f"Appended text to {file}")
             else:
-                print("Sorry, I didn't understand that append command. Use: append \"text\" to file.txt")
+                    print(
+                    "Sorry, I didn't understand that append command. "
+                    "Use: append \"text\" to file.txt"
+                )
             continue
 
         # Flexible 'replace' command parsing
         if cmd.startswith('replace'):
             import re
             # Example: replace "old" with "new" in file.txt
-            match = re.match(r'replace\s+"(.+?)"\s+with\s+"(.+?)"\s+in\s+(.+)', cmd)
+            match = re.match(
+                r'replace\s+"(.+?)"\s+with\s+"(.+?)"\s+in\s+(.+)', cmd
+            )
             if match:
                 old = match.group(1)
                 new = match.group(2)
@@ -253,7 +270,10 @@ def main():
                     edit_file(file_path, find_text=old, replace_text=new)
                     print(f"Replaced text in {file}")
             else:
-                print("Sorry, I didn't understand that replace command. Use: replace \"old\" with \"new\" in file.txt")
+                print(
+                    "Sorry, I didn't understand that replace command. "
+                    "Use: replace \"old\" with \"new\" in file.txt"
+                )
             continue
 
         # Flexible 'create folder' command parsing
@@ -270,7 +290,10 @@ def main():
                     create_folder(folder_path)
                     print(f"Created folder {folder}")
             else:
-                print("Sorry, I didn't understand that create folder command. Use: create folder myfolder")
+                print(
+                    "Sorry, I didn't understand that create folder command. "
+                    "Use: create folder myfolder"
+                )
             continue
 
         # Flexible 'create file' command parsing
@@ -288,7 +311,10 @@ def main():
                         f.write("")
                     print(f"Created file {file}")
             else:
-                print("Sorry, I didn't understand that create file command. Use: create file myfile.txt")
+                print(
+                    "Sorry, I didn't understand that create file command. "
+                    "Use: create file myfile.txt"
+                )
             continue
 
         # Flexible 'zip' command parsing
@@ -301,20 +327,33 @@ def main():
                 zip_name = match.group(2).strip()
                 file_names = [f.strip() for f in files_str.split(',')]
                 file_paths = [os.path.join(DESKTOP, f) for f in file_names]
-                missing = [f for f, p in zip(file_names, file_paths) if not os.path.exists(p)]
+                missing = [
+                    f for f, p in zip(file_names, file_paths)
+                    if not os.path.exists(p)
+                ]
                 if missing:
-                    print(f"[ERROR] These files were not found: {', '.join(missing)}")
+                    print(
+                        f"[ERROR] These files were not found: "
+                        f"{', '.join(missing)}"
+                    )
                 else:
                     zip_path = os.path.join(DESKTOP, zip_name)
                     compress_files(file_paths, zip_path)
                     print(f"Created zip archive {zip_name}")
             else:
-                print("Sorry, I didn't understand that zip command. Use: zip file1.txt, file2.txt as archive.zip")
+                print(
+                    "Sorry, I didn't understand that zip command. "
+                    "Use: zip file1.txt, file2.txt as archive.zip"
+                )
             continue
         if cmd.startswith('summarize'):
             import re
-            # Regex for: summarize [the content of] <file> from <archive> and save to <output>
-            zip_match = re.match(r'summarize(?: the content of)? ([^ ]+) from ([^ ]+) and save to ([^ ]+)', cmd)
+            # Regex for: summarize [the content of] <file> from <archive>
+            # and save to <output>
+            zip_match = re.match(
+                r'summarize(?: the content of)? ([^ ]+) from ([^ ]+) and save to ([^ ]+)',
+                cmd
+            )
             if zip_match:
                 file = zip_match.group(1).strip()
                 archive = zip_match.group(2).strip()
@@ -325,16 +364,25 @@ def main():
                     continue
                 with zipfile.ZipFile(archive_path, 'r') as zipf:
                     if file not in zipf.namelist():
-                        print(f"[ERROR] File {file} not found in archive {archive}")
+                        print(
+                            f"[ERROR] File {file} not found in archive "
+                            f"{archive}"
+                        )
                         continue
                     with zipf.open(file) as f:
                         content = f.read().decode('utf-8')
                 if not content.strip():
-                    print(f"[ERROR] File {file} in archive {archive} is empty.")
+                    print(
+                        f"[ERROR] File {file} in archive "
+                        f"{archive} is empty."
+                    )
                     continue
                 summary = call_llm(content)
                 if not summary or not summary.strip():
-                    print(f"[ERROR] No summary generated for {file} in archive {archive}")
+                    print(
+                        f"[ERROR] No summary generated for {file} "
+                        f"in archive {archive}"
+                    )
                     continue
                 out_path = os.path.join(DESKTOP, out_file)
                 with open(out_path, 'w', encoding='utf-8') as f:
@@ -345,7 +393,10 @@ def main():
                 import re
                 file = None
                 out_file = None
-                match = re.match(r'summarize(?: the content of)? ([^ ]+?) and save to ([^ ]+)', cmd)
+                match = re.match(
+                    r'summarize(?: the content of)? ([^ ]+?) and save to ([^ ]+)',
+                    cmd
+                )
                 if match:
                     file = match.group(1).strip()
                     out_file = match.group(2).strip()
@@ -354,7 +405,10 @@ def main():
                     if len(txts) >= 2:
                         file, out_file = txts[0], txts[1]
                 if not file or not out_file:
-                    print(f"[ERROR] Could not parse input/output filenames from command: {cmd}")
+                    print(
+                        f"[ERROR] Could not parse input/output filenames "
+                        f"from command: {cmd}"
+                    )
                     continue
                 file_path = os.path.join(DESKTOP, file)
                 out_path = os.path.join(DESKTOP, out_file)
@@ -365,8 +419,13 @@ def main():
                     print(f"Summary saved to {out_file}")
                 else:
                     with open(out_path, 'w', encoding='utf-8') as f:
-                        f.write("[ERROR] No summary generated or file is empty.")
-                    print(f"[ERROR] No summary generated or file is empty. See {out_file}")
+                        f.write(
+                            "[ERROR] No summary generated or file is empty."
+                        )
+                    print(
+                        f"[ERROR] No summary generated or file is empty. "
+                        f"See {out_file}"
+                    )
             else:
                 if 'of' in cmd:
                     file = cmd.split('of')[1].strip()
@@ -375,29 +434,48 @@ def main():
                     if summary:
                         print(summary)
                     else:
-                        print(f"[ERROR] No summary generated or file is empty: {file}")
+                        print(
+                            f"[ERROR] No summary generated or file is empty: "
+                            f"{file}"
+                        )
         # ...existing code for other commands...
         elif cmd.startswith('delete'):
             # Support deleting files and folders robustly
             import re
             # Delete folder or floder (typo)
-            folder_match = re.match(r'delete (?:the )?(?:folder|floder)\s+(.+)', cmd)
+            folder_match = re.match(
+                r'delete (?:the )?(?:folder|floder)\s+(.+)', cmd
+            )
             if folder_match:
-                folder = folder_match.group(1).replace('from my desktop', '').strip()
+                folder = (
+                    folder_match.group(1)
+                    .replace('from my desktop', '')
+                    .strip()
+                )
                 path = os.path.join(DESKTOP, folder)
                 if os.path.isdir(path):
                     try:
                         shutil.rmtree(path)
                         print(f"Deleted folder {folder}")
                     except Exception as e:
-                        print(f"[ERROR] Could not delete folder '{folder}': {e}")
+                        print(
+                            f"[ERROR] Could not delete folder '"
+                            f"{folder}': {e}"
+                        )
                 else:
-                    print(f"[ERROR] Folder '{folder}' not found on your desktop.")
+                    print(
+                        f"[ERROR] Folder '{folder}' not found "
+                        f"on your desktop."
+                    )
             else:
                 # Delete file
                 file_match = re.match(r'delete (?:the )?file\s+(.+)', cmd)
                 if file_match:
-                    file = file_match.group(1).replace('from my desktop', '').strip()
+                    file = (
+                        file_match.group(1)
+                        .replace('from my desktop', '')
+                        .strip()
+                    )
                     path = os.path.join(DESKTOP, file)
                     if os.path.isfile(path):
                         try:
