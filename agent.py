@@ -11,11 +11,13 @@ MODEL_ID = os.getenv('MODEL_ID')
 
 DESKTOP = os.path.join(os.path.expanduser('~'), 'Desktop')
 
+
 # Helper: Print friendly output
 
 def print_banner():
     print("\n🤖 Byte Agents Client (Python)")
     print("Type your natural language file commands. Type 'exit' to quit.\n")
+
 
 def search_files(query):
     results = []
@@ -33,10 +35,8 @@ def search_files(query):
     # print(f"[DEBUG] Files on Desktop: {files}")
     if query in known_exts:
         for file in files:
-            # Remove leading and trailing spaces before checking extension
             clean_file = file.strip().lower()
             ext_match = clean_file.endswith(f'.{query}')
-            # Debug print removed
             if ext_match:
                 results.append(os.path.join(DESKTOP, file))
     else:
@@ -45,11 +45,14 @@ def search_files(query):
                 results.append(os.path.join(DESKTOP, file))
     return results
 
+
 def move_file(src, dst):
     shutil.move(src, dst)
 
+
 def copy_file(src, dst):
     shutil.copy2(src, dst)
+
 
 def edit_file(path, find_text=None, replace_text=None, append_text=None):
     if append_text:
@@ -62,13 +65,16 @@ def edit_file(path, find_text=None, replace_text=None, append_text=None):
         with open(path, 'w', encoding='utf-8') as f:
             f.write(content)
 
+
 def create_folder(path):
     os.makedirs(path, exist_ok=True)
+
 
 def compress_files(file_list, zip_name):
     with zipfile.ZipFile(zip_name, 'w') as zipf:
         for file in file_list:
             zipf.write(file, os.path.basename(file))
+
 
 def summarize_file(path):
     if not os.path.exists(path):
@@ -96,9 +102,10 @@ def summarize_file(path):
 
     chunk_summaries = []
     for idx, chunk in enumerate(chunks):
-        print(f"[DEBUG] Summarizing chunk {idx+1}/{len(chunks)} "
-              f"(length: {len(chunk)})")
-        # Only send the chunk content, not instructions, to the model
+        print(
+            f"[DEBUG] Summarizing chunk {idx+1}/{len(chunks)} "
+            f"(length: {len(chunk)})"
+        )
         summary = call_llm(chunk)
         if summary and summary.strip():
             chunk_summaries.append(summary.strip())
@@ -107,19 +114,19 @@ def summarize_file(path):
     if not chunk_summaries:
         print(f"[ERROR] No summaries generated for any chunk in {path}")
         return None
-    # Combine all chunk summaries and summarize again for a
-    # comprehensive summary
     combined = '\n'.join(chunk_summaries)
-    # Only send the combined summary text, not instructions, to the model
-    print(f"[DEBUG] Summarizing combined chunk summaries for final summary.")
+    print(
+        "[DEBUG] Summarizing combined chunk summaries for final summary."
+    )
     final_summary = call_llm(combined)
     if not final_summary or not final_summary.strip():
         print(
-            f"[ERROR] No final summary generated, "
-            f"returning concatenated chunk summaries."
+            "[ERROR] No final summary generated, "
+            "returning concatenated chunk summaries."
         )
         final_summary = combined
     return final_summary
+
 
 def call_llm(text):
     if not HF_TOKEN:
@@ -140,17 +147,25 @@ def call_llm(text):
         result = resp.json()
         if isinstance(result, list):
             if 'summary_text' in result[0]:
-                print(f"[DEBUG] Summary: {result[0]['summary_text']}")
+                print(
+                    f"[DEBUG] Summary: {result[0]['summary_text']}"
+                )
                 return result[0]['summary_text']
             elif 'generated_text' in result[0]:
-                print(f"[DEBUG] Generated: {result[0]['generated_text']}")
+                print(
+                    f"[DEBUG] Generated: {result[0]['generated_text']}"
+                )
                 return result[0]['generated_text']
         elif isinstance(result, dict):
             if 'summary_text' in result:
-                print(f"[DEBUG] Summary: {result['summary_text']}")
+                print(
+                    f"[DEBUG] Summary: {result['summary_text']}"
+                )
                 return result['summary_text']
             elif 'generated_text' in result:
-                print(f"[DEBUG] Generated: {result['generated_text']}")
+                print(
+                    f"[DEBUG] Generated: {result['generated_text']}"
+                )
                 return result['generated_text']
     except Exception as e:
         print(f"[LLM ERROR] {e}")
@@ -158,8 +173,10 @@ def call_llm(text):
 
 
 
+
 def delete_file(path):
     os.remove(path)
+
 
 
 
@@ -174,10 +191,6 @@ def main():
         # Flexible 'find' command parsing
         import re
         if cmd.startswith('find'):
-            # Accepts: find all pdf files on my desktop,
-            # find pdf, find report, etc.
-            # Extract the main search term (extension or keyword)
-            # Remove 'find', 'all', 'files', 'file', 'on my desktop', etc.
             cleaned = (
                 cmd.replace('find', '')
                 .replace('all', '')
@@ -186,7 +199,6 @@ def main():
                 .replace('on my desktop', '')
                 .strip()
             )
-            # Remove extra spaces and punctuation
             cleaned = re.sub(r'[.,;:!?]', '', cleaned)
             cleaned = cleaned.strip()
             if not cleaned:
@@ -200,9 +212,7 @@ def main():
             else:
                 print("No files found matching your search.")
             continue
-        # Flexible 'move' command parsing
         if cmd.startswith('move'):
-            import re
             match = re.match(r'move\s+(.+?)\s+to\s+(.+)', cmd)
             if match:
                 src = match.group(1).strip()
@@ -217,10 +227,7 @@ def main():
             else:
                 print("Sorry, I didn't understand that move command.")
             continue
-
-        # Flexible 'copy' command parsing
         if cmd.startswith('copy'):
-            import re
             match = re.match(r'copy\s+(.+?)\s+to\s+(.+)', cmd)
             if match:
                 src = match.group(1).strip()
@@ -235,11 +242,7 @@ def main():
             else:
                 print("Sorry, I didn't understand that copy command.")
             continue
-
-        # Flexible 'append' command parsing
         if cmd.startswith('append'):
-            import re
-            # Example: append "some text" to file.txt
             match = re.match(r'append\s+"(.+?)"\s+to\s+(.+)', cmd)
             if match:
                 text = match.group(1)
@@ -256,11 +259,7 @@ def main():
                     "Use: append \"text\" to file.txt"
                 )
             continue
-
-        # Flexible 'replace' command parsing
         if cmd.startswith('replace'):
-            import re
-            # Example: replace "old" with "new" in file.txt
             match = re.match(
                 r'replace\s+"(.+?)"\s+with\s+"(.+?)"\s+in\s+(.+)', cmd
             )
@@ -280,11 +279,7 @@ def main():
                     "Use: replace \"old\" with \"new\" in file.txt"
                 )
             continue
-
-        # Flexible 'create folder' command parsing
         if cmd.startswith('create folder') or cmd.startswith('make folder'):
-            import re
-            # Example: create folder myfolder
             match = re.match(r'(?:create|make) folder\s+(.+)', cmd)
             if match:
                 folder = match.group(1).strip()
@@ -300,11 +295,7 @@ def main():
                     "Use: create folder myfolder"
                 )
             continue
-
-        # Flexible 'create file' command parsing
         if cmd.startswith('create file'):
-            import re
-            # Example: create file myfile.txt
             match = re.match(r'create file\s+(.+)', cmd)
             if match:
                 file = match.group(1).strip()
@@ -321,11 +312,7 @@ def main():
                     "Use: create file myfile.txt"
                 )
             continue
-
-        # Flexible 'zip' command parsing
         if cmd.startswith('zip'):
-            import re
-            # Example: zip file1.txt, file2.txt as archive.zip
             match = re.match(r'zip\s+(.+?)\s+as\s+(.+)', cmd)
             if match:
                 files_str = match.group(1).strip()
@@ -352,9 +339,6 @@ def main():
                 )
             continue
         if cmd.startswith('summarize'):
-            import re
-            # Regex for: summarize [the content of] <file> from <archive>
-            # and save to <output>
             zip_match = re.match(
                 r'summarize(?: the content of)? ([^ ]+) from ([^ ]+) and save to ([^ ]+)',
                 cmd
@@ -395,7 +379,6 @@ def main():
                 print(f"Summary saved to {out_file}")
                 continue
             elif 'and save to' in cmd:
-                import re
                 file = None
                 out_file = None
                 match = re.match(
@@ -443,12 +426,7 @@ def main():
                             f"[ERROR] No summary generated or file is empty: "
                             f"{file}"
                         )
-        # ...existing code for other commands...
-
-        elif cmd.startswith('delete'):
-            # Support deleting files and folders robustly
-            import re
-            # Delete folder or floder (typo)
+        if cmd.startswith('delete'):
             folder_match = re.match(
                 r'delete (?:the )?(?:folder|floder)\s+(.+)', cmd
             )
@@ -474,7 +452,6 @@ def main():
                         f"on your desktop."
                     )
             else:
-                # Delete file
                 file_match = re.match(r'delete (?:the )?file\s+(.+)', cmd)
                 if file_match:
                     file = (
@@ -488,33 +465,24 @@ def main():
                             delete_file(path)
                             print(f"Deleted file {file}")
                         except Exception as e:
-                            # Split long error message for flake8 compliance
                             print(
                                 f"[ERROR] Could not delete file '"
                                 f"{file}': {e}"
                             )
                     else:
-                        # Split long error message for flake8 compliance
                         print(
                             f"[ERROR] File '{file}' not found "
                             f"on your desktop."
                         )
                 else:
-                    # Split long error message for flake8 compliance
                     print(
                         "[ERROR] Please specify a valid file or "
                         "folder to delete."
                     )
-        elif cmd == '':
+        if cmd == '':
             pass
         else:
             print("Sorry, I didn't understand that command.")
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
-
