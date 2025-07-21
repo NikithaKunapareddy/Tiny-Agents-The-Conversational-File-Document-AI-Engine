@@ -15,6 +15,7 @@ def print_banner():
     print("\n🤖 Byte Agents Client (Python)")
     print("Type your natural language file commands. Type 'exit' to quit.\n")
 
+
 def search_files(query):
     results = []
     query = query.lower()
@@ -41,11 +42,14 @@ def search_files(query):
                 results.append(os.path.join(DESKTOP, file))
     return results
 
+
 def move_file(src, dst):
     shutil.move(src, dst)
 
+
 def copy_file(src, dst):
     shutil.copy2(src, dst)
+
 
 def edit_file(path, find_text=None, replace_text=None, append_text=None):
     if append_text:
@@ -58,13 +62,16 @@ def edit_file(path, find_text=None, replace_text=None, append_text=None):
         with open(path, 'w', encoding='utf-8') as f:
             f.write(content)
 
+
 def create_folder(path):
     os.makedirs(path, exist_ok=True)
+
 
 def compress_files(file_list, zip_name):
     with zipfile.ZipFile(zip_name, 'w') as zipf:
         for file in file_list:
             zipf.write(file, os.path.basename(file))
+
 
 def summarize_file(path):
     if not os.path.exists(path):
@@ -117,6 +124,7 @@ def summarize_file(path):
         final_summary = combined
     return final_summary
 
+
 def call_llm(text):
     if not HF_TOKEN:
         print("[ERROR] Hugging Face API token not set in .env")
@@ -161,12 +169,8 @@ def call_llm(text):
     return None
 
 
-
-
-
 def delete_file(path):
     os.remove(path)
-
 
 
 def main():
