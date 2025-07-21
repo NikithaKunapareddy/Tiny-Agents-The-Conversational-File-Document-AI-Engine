@@ -174,8 +174,13 @@ def call_llm(text):
 
 
 
+
+
 def delete_file(path):
     os.remove(path)
+
+
+
 def main():
     print_banner()
 
@@ -195,8 +200,6 @@ def main():
                 .replace('on my desktop', '')
                 .strip()
             )
-            cleaned = re.sub(r'[.,;:!?]', '', cleaned)
-            cleaned = cleaned.strip()
             if not cleaned:
                 print("Please specify what to search for.")
                 continue
