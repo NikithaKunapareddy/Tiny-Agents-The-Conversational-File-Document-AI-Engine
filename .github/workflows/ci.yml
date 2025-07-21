@@ -21,9 +21,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Set environment variables
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
         run: |
-          echo "HF_TOKEN=${{ secrets.HF_TOKEN }}" >> $GITHUB_ENV
-          echo "GCP_CREDENTIALS=${{ secrets.GCP_CREDENTIALS }}" >> $GITHUB_ENV
+          echo "HF_TOKEN is set"
+          echo "GCP_CREDENTIALS is set"
       - name: Lint with flake8
         run: |
           pip install flake8
