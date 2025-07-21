@@ -176,10 +176,6 @@ def call_llm(text):
 
 def delete_file(path):
     os.remove(path)
-
-
-
-
 def main():
     print_banner()
 
@@ -331,7 +327,9 @@ def main():
                 else:
                     zip_path = os.path.join(DESKTOP, zip_name)
                     compress_files(file_paths, zip_path)
-                    print(f"Created zip archive {zip_name}")
+                    print(
+                        f"Created zip archive {zip_name}"
+                    )
             else:
                 print(
                     "Sorry, I didn't understand that zip command. "
