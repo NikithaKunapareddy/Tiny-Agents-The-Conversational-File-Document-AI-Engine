@@ -55,6 +55,8 @@ flowchart TD
     OUTPUT --> TERMINAL
     %% Support Connections
     ENV --> CLI
+
+
 ## Web Interface
 
 In addition to the CLI, Tiny Agents now includes a Flask web interface for running commands from your browser.
@@ -74,13 +76,10 @@ In addition to the CLI, Tiny Agents now includes a Flask web interface for runni
 
 ### Usage
 
+
 Enter any supported command (the same as the CLI) into the web form and view the output in your browser.
 
-
 > **Note:** You can use any of the commands listed in the Example Commands section below in the web interface.
-
-
-```
 
 ### 🗂️ Component Matrix
 
