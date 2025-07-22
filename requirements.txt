@@ -3,3 +3,5 @@ requests
 rich
 tqdm
 pyperclip
+Flask
+gunicorn
