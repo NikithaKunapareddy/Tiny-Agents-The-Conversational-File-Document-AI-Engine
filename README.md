@@ -46,24 +46,40 @@ flowchart TD
     MANAGE[File Manager]
     TEXT[Text Editor]
     ARCHIVE[Archive Tools]
-    %% Main Flow
     USER --> CLI
     CLI --> LLM
     LLM --> FILES
-    FILES --> FIND
-    FILES --> MANAGE
-    FILES --> TEXT
-    FILES --> ARCHIVE
-    %% Return Path
     FIND --> OUTPUT
-    MANAGE --> OUTPUT
     TEXT --> OUTPUT
     ARCHIVE --> OUTPUT
     OUTPUT --> TERMINAL
     %% Support Connections
     ENV --> CLI
-    SECURITY --> CLI
-    LOGGER --> CLI
+## Web Interface
+
+In addition to the CLI, Tiny Agents now includes a Flask web interface for running commands from your browser.
+
+### How to Run the Web App
+
+1. Make sure you have all dependencies installed:
+   ```bash
+   pip install -r requirements.txt
+   ```
+2. Set up your `.env` file with the required API keys and tokens.
+3. Start the Flask app:
+   ```bash
+   python app.py
+   ```
+4. Open your browser and go to [http://localhost:5000](http://localhost:5000)
+
+### Usage
+
+Enter any supported command (the same as the CLI) into the web form and view the output in your browser.
+
+
+> **Note:** You can use any of the commands listed in the Example Commands section below in the web interface.
+
+
 ```
 
 ### 🗂️ Component Matrix
@@ -73,33 +89,16 @@ flowchart TD
 | 🤖 CLI Command Engine       | Python               | Natural language command parsing & execution         |
 | 🧠 Summarization LLM        | Hugging Face API     | High-fidelity, multi-paragraph document summarization|
 | 📂 File/Folder Operations   | Python stdlib        | Robust file, folder, and zip management              |
-| 🔐 Env Management           | python-dotenv        | Secure API key & model configuration                 |
 | 📤 Output Orchestration     | Console, Files       | Save, print, or archive results                      |
 | 🛡️ Error Handling & Logging | Python logging       | Robust error capture, user feedback, and traceability|
 | 🔒 Security & Validation    | Python, stdlib       | Input validation, safe file operations, .env secrets |
 
 ---
-
-
-
-
-
-## 🔄 How the AI Agent Workflow Operates
-
-> **From your words to real results – see how Tiny-Agents brings your requests to life!**
-
-1. 👤 **User** types a request in the terminal, like:
-   > “Create a file named note.txt with the text ‘Hello’.”
-2. 🤖 **Tiny-Agent** sends your message to the LLM (Hugging Face).
-3. 🧠 **LLM** reads your request and decides:
    > “To do this, I need to use the file creation tool.”
-4. 🛠️ **LLM** tells the agent:
    > “Please call this tool with these inputs.”
 5. 📂 **Tiny-Agent** uses MCP (Model Context Protocol) to call the correct tool (like createFile from the file system server).
 6. 📝 **The tool runs** (actually creates the file) and returns a result like:
    > “✅ File created successfully.”
-7. 🧠 **LLM** sees the tool result and writes a final reply like:
-   > “Done! The file note.txt was created.”
 8. 💬 **Tiny-Agent** shows the final answer to the user in the terminal.
 9. 🔁 **In short:**
    User → LLM → decides tool → MCP tool runs → result → LLM → reply → User
@@ -111,11 +110,15 @@ flowchart TD
 
 ## 🗂️ Project Structure
 
+
 ```text
 Tiny-Agents/
 ├── agent.py         # Main CLI agent
+├── app.py           # Flask web server for browser-based commands
 ├── requirements.txt # Python dependencies
 ├── README.md        # This file
+├── LICENSE          # License file
+├── templates/       # Contains index.html for the web UI
 └── .env             # Your API keys and model config (not included by default)
 ```
 
@@ -124,10 +127,7 @@ Tiny-Agents/
 ## 💬 Example Commands
 
 Try these natural language commands:
-
-- `find pdf`
 - `move file1.txt to archive.txt`
-- `copy notes.txt to backup.txt`
 - `append "hello world" to notes.txt`
 - `replace "foo" with "bar" in notes.txt`
 - `create folder myfolder`
@@ -147,15 +147,10 @@ Try these natural language commands:
 ### Prerequisites
 - Python 3.8+
 - Hugging Face account & API token
-
 ### 🚦 Quickstart
 ```bash
 # 1. Clone the repository
-git clone https://github.com/yourusername/Tiny-Agents.git
-cd Tiny-Agents
-
 # 2. Create a virtual environment (recommended)
-python -m venv venv
 # venv\Scripts\activate   # On Windows
 source venv/bin/activate  # On Linux/macOS
 
