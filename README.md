@@ -56,7 +56,6 @@ flowchart TD
     %% Support Connections
     ENV --> CLI
 
-
 ## Web Interface
 
 In addition to the CLI, Tiny Agents now includes a Flask web interface for running commands from your browser.
