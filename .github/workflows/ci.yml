@@ -30,7 +30,24 @@ jobs:
       - name: Lint with flake8
         run: |
           pip install flake8
-          flake8 agent.py
-      - name: Run basic script check
+          flake8 agent.py app.py
+      - name: Run basic script check (agent.py)
         run: |
           python agent.py --help || true
+      - name: Run basic script check (app.py)
+        run: |
+          python -m py_compile app.py
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_CREDENTIALS }}
+          export_default_credentials: true
+      - name: Deploy to Google Cloud Run
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          gcloud run deploy ${{ secrets.GCP_SERVICE_NAME }} \
+            --source . \
+            --region ${{ secrets.GCP_REGION }} \
+            --platform managed \
+            --allow-unauthenticated
