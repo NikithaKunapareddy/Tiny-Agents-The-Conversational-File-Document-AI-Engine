@@ -38,6 +38,7 @@ jobs:
         run: |
           python -m py_compile app.py
       - name: Set up Cloud SDK
+        id: setup-gcloud
         uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
@@ -45,6 +46,8 @@ jobs:
           export_default_credentials: true
       - name: Deploy to Google Cloud Run
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.setup-gcloud.outputs.credentials_file_path }}
         run: |
           gcloud run deploy ${{ secrets.GCP_SERVICE_NAME }} \
             --source . \
