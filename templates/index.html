@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Byte Agents Web</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        #output { white-space: pre-wrap; background: #f4f4f4; padding: 1em; }
+        input[type=text] { width: 400px; padding: 0.5em; }
+        button { padding: 0.5em 1em; }
+    </style>
+</head>
+<body>
+    <h2>Byte Agents Web (Flask Demo)</h2>
+    <form id="cmdForm">
+        <input type="text" id="cmd" name="cmd" placeholder="Enter command...">
+        <button type="submit">Run</button>
+    </form>
+    <div id="output"></div>
+    <script>
+        document.getElementById('cmdForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const cmd = document.getElementById('cmd').value;
+            const res = await fetch('/command', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'cmd=' + encodeURIComponent(cmd)
+            });
+            const data = await res.json();
+            document.getElementById('output').textContent = data.output;
+        };
+    </script>
+</body>
+</html>
