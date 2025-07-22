@@ -2,9 +2,13 @@ from flask import Flask, request, render_template, jsonify
 import re
 import os
 import shutil
+
 import agent  # Import your CLI logic
 
-DESKTOP = agent.DESKTOP
+# Use a safe, writable directory for all file operations in Cloud Run
+DESKTOP = '/tmp/byte_agents'
+# Ensure the directory exists at startup
+os.makedirs(DESKTOP, exist_ok=True)
 
 app = Flask(__name__)
 
