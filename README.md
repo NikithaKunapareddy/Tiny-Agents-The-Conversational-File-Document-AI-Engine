@@ -27,34 +27,47 @@ Welcome to **Tiny-Agents**: your all-in-one, natural language-powered desktop au
 Tiny-Agents is built with a layered, modular architecture for clarity, reliability, and future scalability. See the system design below:
 
 
+
 ```mermaid
 flowchart TD
     %% User Interface
     USER[User Input - Natural Language]
     TERMINAL[Terminal - CLI Output]
+    
     %% Core Processing
     CLI[CLI Engine - Command Parser]
     LLM[AI Model - Hugging Face]
     FILES[File Operations - Python stdlib]
+    
     %% Support Systems
     ENV[Environment - Config and Keys]
     OUTPUT[Output Handler - Console and Files]
     SECURITY[Security - Validation]
     LOGGER[Error Handler - Logging]
+    
     %% File Tools
     FIND[Find Files]
     MANAGE[File Manager]
     TEXT[Text Editor]
     ARCHIVE[Archive Tools]
+    
+    %% Connections as shown in image
     USER --> CLI
+    ENV --> CLI
+    SECURITY --> CLI
+    LOGGER --> CLI
     CLI --> LLM
     LLM --> FILES
+    FILES --> FIND
+    FILES --> MANAGE
+    FILES --> TEXT
+    FILES --> ARCHIVE
     FIND --> OUTPUT
+    MANAGE --> OUTPUT
     TEXT --> OUTPUT
     ARCHIVE --> OUTPUT
     OUTPUT --> TERMINAL
-    %% Support Connections
-    ENV --> CLI
+```
 
 ## Web Interface
 
