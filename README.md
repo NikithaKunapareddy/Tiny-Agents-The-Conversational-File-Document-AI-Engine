@@ -105,12 +105,19 @@ Enter any supported command (the same as the CLI) into the web form and view the
 | 🔒 Security & Validation    | Python, stdlib       | Input validation, safe file operations, .env secrets |
 
 ---
-   > “To do this, I need to use the file creation tool.”
-   > “Please call this tool with these inputs.”
-5. 📂 **Tiny-Agent** uses MCP (Model Context Protocol) to call the correct tool (like createFile from the file system server).
+   > "To do this, I need to use the file creation tool."
+   > "Please call the file creation tool with the following inputs: filename='newfile.txt', content='Hello world!'"
+ 
+### How Tiny-Agent Executes a Command (Step-by-Step)
+1. 🗣️ **User gives a natural language command** (e.g., "create file new.txt").
+2. 🤖 **LLM (AI model) parses the command** and decides what needs to be done.
+3. 🧭 **LLM tells the agent which tool to use** (e.g., file creation tool) and what inputs to provide.
+4. 🛠️ **Agent prepares the tool call** with the required inputs.
+5. 📂 **Tiny-Agent uses MCP (Model Context Protocol)** to call the correct tool (like createFile from the file system server).
 6. 📝 **The tool runs** (actually creates the file) and returns a result like:
    > “✅ File created successfully.”
-8. 💬 **Tiny-Agent** shows the final answer to the user in the terminal.
+7. 📬 **Agent receives the result** from the tool.
+8. 💬 **Tiny-Agent shows the final answer to the user** in the terminal or web interface.
 9. 🔁 **In short:**
    User → LLM → decides tool → MCP tool runs → result → LLM → reply → User
 
